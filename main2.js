@@ -75,7 +75,7 @@ $(document).on("click", "#edit", function() {
     $.ajax({
         url: "productUpdate.php",
         type: "GET",
-        dataType: "json", // Fix incorrect "datatype" spelling
+        dataType: "json",
         data: {
             pid: productId,
             pname: "watataps"

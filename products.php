@@ -2,7 +2,7 @@
     include("dbconnect.php");
     
     try{
-        $query = "SELECT * FROM tablescript";
+        $query = "SELECT * FROM tablescript LIMIT 10";
         $statement = $connection->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
