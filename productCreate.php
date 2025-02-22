@@ -1,18 +1,13 @@
 <?php 
 include('dbconnect.php');
 
-if (!isset($_GET['pname']) || empty($_GET['pname'])) {
-    echo json_encode(["res" => "error", "msg" => "Product name is required"]);
-    exit();
-}
-
-$query = "INSERT INTO tablescript (Product_name) VALUES (:pname)";
+$query = "insert into tablescript(Product_name) values('".$_GET['pname']."')";
 $statement = $connection->prepare($query);
-$res = $statement->execute([':pname' => $_GET['pname']]);
+$res = $statement->execute();
 
-if ($res) {
+if($res){
     echo json_encode(["res" => "success"]);
-} else {
-    echo json_encode(["res" => "error", "msg" => "Database insertion failed"]);
+}else{
+    echo json_encode(["res" => "error", "msg" => "Product not added"]);
 }
 ?>

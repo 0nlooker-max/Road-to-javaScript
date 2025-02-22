@@ -78,7 +78,7 @@ $(document).on("click", "#edit", function() {
         dataType: "json", // Fix incorrect "datatype" spelling
         data: {
             pid: productId,
-            pname: "KKIT"
+            pname: "watataps"
         }
     }).done(function(result) {
         console.log("Server Response:", result);
