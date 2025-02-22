@@ -29,18 +29,15 @@ $("#add").click(function(){
             pname: "sadddd",
         }
     }).done(function(result) {
-        console.log("Server Response:", result); // Debugging
+        console.log("Server Response:", result); 
 
         if (result.res === "success") {
             alert("Product added successfully");
             window.location.reload();
         } else {
-            alert("Error: " + result.msg); // Now correctly displays the error message
+            alert("Error: " + result.msg); 
         }
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("AJAX Error:", textStatus, errorThrown);
-        alert("AJAX Request Failed: " + textStatus);
-    });
+    })
 });
 
 
@@ -48,7 +45,7 @@ $(document).on("click", "#delete", function() {
     var row = $(this).closest('tr');
     var productId = row.find('.tdId').text();
 
-    console.log("Deleting product ID:", productId); // Check if this logs
+    console.log("Deleting product ID:", productId);
 
     $.ajax({
         url: "productDelete.php",
@@ -71,23 +68,27 @@ $(document).on("click", "#delete", function() {
 
 
 
-$("#update").click(function(){
+$(document).on("click", "#edit", function() {
+    var row = $(this).closest('tr');
+    var productId = row.find('.tdId').text();
+
     $.ajax({
-        url : "productUpdate.php",
-        type : "GET",
-        datatype : "json",
-        data :{
-            pid : 1,
-            pname : "PANLAAN",
+        url: "productUpdate.php",
+        type: "GET",
+        dataType: "json", // Fix incorrect "datatype" spelling
+        data: {
+            pid: productId,
+            pname: "KKIT"
         }
-    }).done(function(result){
-        if(result.res == "success"){
+    }).done(function(result) {
+        console.log("Server Response:", result);
+        
+        if (result.res === "success") {
             alert("Product updated successfully");
             window.location.reload();
-        }else{
-            alert(" not updated");
-            window.location.reload();
-
+        } else {
+            alert("Product not updated");
         }
     })
 });
+
