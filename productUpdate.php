@@ -19,7 +19,7 @@
         // Update query
         $stmt = $connection->prepare("UPDATE prilimtable SET first_name = ?, last_name = ?, email = ?, gender = ?, course = ?, user_address = ?, birthdate = ? WHERE student_id = ?");
         $stmt->execute([$firstName, $lastName, $email, $gender, $course, $userAddress, $birthdate, $studentId]);
-
+        //giving the response to the ajax request
         $response = array('res' => 'success', 'msg' => 'Student updated successfully');
         echo json_encode($response);
     } catch (Exception $e) {
