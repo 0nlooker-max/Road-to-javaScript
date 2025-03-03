@@ -75,7 +75,7 @@ $(document).ready(function () {
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
             console.log("AJAX Error:", textStatus, errorThrown);
-            console.log("Response Text:", jqXHR.responseText); // Log the response text
+            console.log("Response Text:", jqXHR.responseText); 
         });
     });
 
