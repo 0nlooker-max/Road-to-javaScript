@@ -1,5 +1,5 @@
 $.ajax({
-    url : "products.php"
+    url : "table.php"
 }).done(function(data) {
 
     console.log(data);
@@ -8,87 +8,145 @@ $.ajax({
     let template = document.querySelector("#produtrowtemplate");
     let parent = document.querySelector("#tableBody");
 
-    result.forEach(item =>{
+    result.forEach(item => {
         let clone = template.content.cloneNode(true);
-        clone.querySelector(".tdId").innerHTML = item.product_id;
-        clone.querySelector(".tdName").innerHTML = item.Product_name;
-        parent.appendChild(clone);   
-    })
-})
+        clone.querySelector(".tdId").innerHTML = item.student_id;
+        clone.querySelector(".fname").innerHTML = item.first_name;
+        clone.querySelector(".lname").innerHTML = item.last_name;
+        clone.querySelector(".email").innerHTML = item.email;
+        clone.querySelector(".gender").innerHTML = item.gender;
+        clone.querySelector(".course").innerHTML = item.course;
+        clone.querySelector(".address").innerHTML = item.user_address;
+        clone.querySelector(".age").innerHTML = calculateAge(item.birthdate);
+        clone.querySelector(".age").setAttribute("data-birthdate", item.birthdate);
+
+        parent.appendChild(clone);
+    });
+});
+
+function calculateAge(birthdate) {
+    let birthDate = new Date(birthdate);
+    let today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    let monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+
+    return age;
+}
 
 // $("h1").click(function(){
 //     console.log("H1 is clicked");
    
 // });
-$("#add").click(function(){
-    $.ajax({
-        url: "productCreate.php",
-        type: "GET",
-        dataType: "json",
-        data: {
-            pname: "sadddd",
-        }
-    }).done(function(result) {
-        console.log("Server Response:", result); 
 
-        if (result.res === "success") {
-            alert("Product added successfully");
-            window.location.reload();
-        } else {
-            alert("Error: " + result.msg); 
-        }
-    })
-});
+$(document).ready(function () {
 
+    console.log("Document is ready");
 
-$(document).on("click", "#delete", function() {
-    var row = $(this).closest('tr');
-    var productId = row.find('.tdId').text();
+    $("#addBtn").click(function () {
+        console.log("Add button clicked"); 
+    });
 
-    console.log("Deleting product ID:", productId);
+    // Add Student
+    $("#addStudentForm").on("submit", function (event) {
+        event.preventDefault();
 
-    $.ajax({
-        url: "productDelete.php",
-        type: "GET",
-        dataType: "json",
-        data: {
-            pid: productId
-        }
-    }).done(function(result) {
-        if (result.res == "success") {
-            alert("Product deleted successfully");
-            row.remove();
-        } else {
-            alert("Product not deleted");
-        }
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("AJAX Error:", textStatus, errorThrown);
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: "add.php",
+            type: "POST",
+            data: formData,
+            contentType: false, 
+            processData: false,
+            dataType: "json"
+        }).done(function (result) {
+            console.log("Server Response:", result);
+
+            if (result.res === "success") {
+                alert("Student added successfully");
+                $("#addStudentModal").modal("hide");
+                window.location.reload();
+            } else {
+                alert("Error: " + result.msg);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.log("AJAX Error:", textStatus, errorThrown);
+            console.log("Response Text:", jqXHR.responseText); // Log the response text
+        });
+    });
+
+    // Delete Student
+   $(document).on("click", "#delete", function () {
+        let row = $(this).closest("tr");
+        let studentId = row.find(".tdId").text();
+
+        $.ajax({
+            url: "delete.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+                id: studentId
+            }
+        }).done(function (result) {
+            if (result.res === "success") {
+                alert("Student deleted successfully");
+                row.remove();
+            } else {
+                alert("Error deleting student: " + result.msg);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.log("AJAX Error:", textStatus, errorThrown);
+        });
+    });
+    // Edit Student
+    $(document).on("click", ".edit-btn", function () {
+        let row = $(this).closest("tr");
+        let studentId = row.find(".tdId").text();
+        let firstName = row.find(".fname").text();
+        let lastName = row.find(".lname").text();
+        let email = row.find(".email").text();
+        let gender = row.find(".gender").text();
+        let course = row.find(".course").text();
+        let userAddress = row.find(".address").text();
+        let birthdate = row.find(".age").attr("data-birthdate");
+
+        console.log("bitrhdate", birthdate);
+
+        $("#editStudentId").val(studentId);
+        $("#editFirstName").val(firstName);
+        $("#editLastName").val(lastName);
+        $("#editEmail").val(email);
+        $("#editGender").val(gender);
+        $("#editCourse").val(course);
+        $("#editUserAddress").val(userAddress);
+        $("#editBirthdate").val(birthdate);
+    });
+
+    // Update Student
+    $("#editStudentForm").on("submit", function (event) {
+        event.preventDefault();
+
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: "update.php",
+            type: "POST",
+            data: formData,
+            dataType: "json"
+        }).done(function (result) {
+            if (result.res === "success") {
+                alert("Student updated successfully");
+                $("#editStudentModal").modal("hide");
+                window.location.reload();
+            } else {
+                alert("Error updating student: " + result.msg);
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.log("AJAX Error:", textStatus, errorThrown);
+        });
     });
 });
-
-
-
-$(document).on("click", "#edit", function() {
-    var row = $(this).closest('tr');
-    var productId = row.find('.tdId').text();
-
-    $.ajax({
-        url: "productUpdate.php",
-        type: "GET",
-        dataType: "json",
-        data: {
-            pid: productId,
-            pname: "watataps"
-        }
-    }).done(function(result) {
-        console.log("Server Response:", result);
-        
-        if (result.res === "success") {
-            alert("Product updated successfully");
-            window.location.reload();
-        } else {
-            alert("Product not updated");
-        }
-    })
-});
-
