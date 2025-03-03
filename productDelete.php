@@ -1,13 +1,20 @@
 <?php
+header('Content-Type: application/json');
 
-include("dbconnect.php");
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-$query = "delete from tablescript where product_id='".$_GET['pid']."'";
+include("connection.php");
+
+$studentId = $_POST['id'];
+
+$query = "DELETE FROM prilimtable WHERE student_id = ?";
 $statement = $connection->prepare($query);
-$res = $statement->execute();
+$res = $statement->execute([$studentId]);
 
 if($res){
     echo json_encode(["res" => "success"]);
 }else{
-    echo json_encode(["res" => "error", "msg" => "Product not deleted"]);
+    echo json_encode(["res" => "error", "msg" => "Student not deleted"]);
 }
+?>

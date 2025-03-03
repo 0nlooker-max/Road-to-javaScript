@@ -57,7 +57,7 @@ $(document).ready(function () {
         let formData = new FormData(this);
 
         $.ajax({
-            url: "add.php",
+            url: "productCreate.php",
             type: "POST",
             data: formData,
             contentType: false, 
@@ -85,7 +85,7 @@ $(document).ready(function () {
         let studentId = row.find(".tdId").text();
 
         $.ajax({
-            url: "delete.php",
+            url: "productDelete.php",
             type: "POST",
             dataType: "json",
             data: {
@@ -133,7 +133,7 @@ $(document).ready(function () {
         let formData = $(this).serialize();
 
         $.ajax({
-            url: "update.php",
+            url: "productUpdate.php",
             type: "POST",
             data: formData,
             dataType: "json"
