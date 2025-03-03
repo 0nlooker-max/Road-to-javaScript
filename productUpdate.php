@@ -5,7 +5,7 @@
     ini_set('display_errors', 1);
 
     include 'dbconnect.php';
-
+    //taking the values from the form the POST Ajax request
     try {
         $studentId = $_POST['studentId'];
         $firstName = $_POST['firstName'];
