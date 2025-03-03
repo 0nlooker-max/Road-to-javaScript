@@ -1,5 +1,5 @@
 <?php 
-    include("connection.php");
+    include("dbconnect.php");
     
     try{
         $query = "SELECT * FROM prilimtable LIMIT 10";

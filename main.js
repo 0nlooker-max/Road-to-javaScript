@@ -1,5 +1,5 @@
 $.ajax({
-    url : "table.php"
+    url : "products.php"
 }).done(function(data) {
 
     console.log(data);
