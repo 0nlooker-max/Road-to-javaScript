@@ -5,19 +5,18 @@
     background-color: #f1f1f1;
 }
 .containers{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 300;
-    width: 300;
+    position: fixed;
+    inset: 0px;
+    width: 12rem;
+    height: 5rem;
+    max-width: 100vw;
+    max-height: 100dvh;
+    margin: auto;
 }
 .container__login{
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: #f1f1f1;
-    border-radius: 10;
-    padding: 20;
-    margin-top: 50;
+    
 }
