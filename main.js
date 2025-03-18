@@ -1,14 +1,13 @@
 $.ajax({
-    url : "products.php"
-}).done(function(data) {
+    url: "table.php"
+}).done(function (data) {
 
     console.log(data);
     let result = JSON.parse(data);
 
     let template = document.querySelector("#produtrowtemplate");
     let parent = document.querySelector("#tableBody");
-    
-    //displaying the list in the table
+
     result.forEach(item => {
         let clone = template.content.cloneNode(true);
         clone.querySelector(".tdId").innerHTML = item.student_id;
@@ -21,6 +20,12 @@ $.ajax({
         clone.querySelector(".age").innerHTML = calculateAge(item.birthdate);
         clone.querySelector(".age").setAttribute("data-birthdate", item.birthdate);
 
+        let profileImg = clone.querySelector(".profile-img");
+        if (item.profile) {
+            profileImg.src = item.profile;
+        } else {
+            profileImg.src = "profiles/default.jpg"; // Ensure this default image exists
+        }
         parent.appendChild(clone);
     });
 });
@@ -40,7 +45,7 @@ function calculateAge(birthdate) {
 
 // $("h1").click(function(){
 //     console.log("H1 is clicked");
-   
+
 // });
 
 $(document).ready(function () {
@@ -48,7 +53,7 @@ $(document).ready(function () {
     console.log("Document is ready");
 
     $("#addBtn").click(function () {
-        console.log("Add button clicked"); 
+        console.log("Add button clicked");
     });
 
     // Add Student
@@ -58,10 +63,10 @@ $(document).ready(function () {
         let formData = new FormData(this);
 
         $.ajax({
-            url: "productCreate.php",
+            url: "add.php",
             type: "POST",
             data: formData,
-            contentType: false, 
+            contentType: false,
             processData: false,
             dataType: "json"
         }).done(function (result) {
@@ -76,17 +81,17 @@ $(document).ready(function () {
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
             console.log("AJAX Error:", textStatus, errorThrown);
-            console.log("Response Text:", jqXHR.responseText); 
+            console.log("Response Text:", jqXHR.responseText); // Log the response text
         });
     });
 
     // Delete Student
-   $(document).on("click", "#delete", function () {
+    $(document).on("click", "#delete", function () {
         let row = $(this).closest("tr");
         let studentId = row.find(".tdId").text();
 
         $.ajax({
-            url: "productDelete.php",
+            url: "delete.php",
             type: "POST",
             dataType: "json",
             data: {
@@ -114,8 +119,9 @@ $(document).ready(function () {
         let course = row.find(".course").text();
         let userAddress = row.find(".address").text();
         let birthdate = row.find(".age").attr("data-birthdate");
+        let profileImg = row.find(".profile-img").attr("src");
 
-        console.log("bitrhdate", birthdate);
+        console.log("profile", profileImg);
 
         $("#editStudentId").val(studentId);
         $("#editFirstName").val(firstName);
@@ -125,18 +131,20 @@ $(document).ready(function () {
         $("#editCourse").val(course);
         $("#editUserAddress").val(userAddress);
         $("#editBirthdate").val(birthdate);
+        $("#currentProfileImg").attr("src", profileImg); // Set the current profile image
     });
 
-    // Update Student
     $("#editStudentForm").on("submit", function (event) {
         event.preventDefault();
 
-        let formData = $(this).serialize();
+        let formData = new FormData(this);
 
         $.ajax({
-            url: "productUpdate.php",
+            url: "update.php",
             type: "POST",
             data: formData,
+            contentType: false,
+            processData: false,
             dataType: "json"
         }).done(function (result) {
             if (result.res === "success") {

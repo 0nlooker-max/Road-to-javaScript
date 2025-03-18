@@ -1,5 +1,5 @@
 <?php 
-    include("dbconnect.php");
+    include("connection.php");
     
     try{
         $query = "SELECT * FROM prilimtable LIMIT 10";
@@ -12,5 +12,4 @@
         echo json_encode(['error' => $th->getMessage()]);
 
     }
-
 ?>
