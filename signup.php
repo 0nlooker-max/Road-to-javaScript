@@ -14,8 +14,5 @@
     }else{
         echo json_encode(["res" => "error", "msg" => "Student not added"]);
     }
-
-
-
-
+    tms = "pinx dhrz xtwy attv";
 ?>
