@@ -7,42 +7,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        // Check if the email exists in the database
-        $stmt = $connection->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            // Check if the email exists in the database
+            $stmt = $connection->prepare("SELECT * FROM users WHERE email = :email");
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user) {
-            // Verify the password
-            if (password_verify($password, $user['user_password'])) {
-                // Check if the account is verified
-                if ($user['is_verified'] == 1) {
-                    // Start a session and store user information
-                    session_start();
-                    $_SESSION['user_id'] = $user['student_id'];
-                    $_SESSION['email'] = $user['email'];
+            if ($user) {
+                // Verify the password
+                if (password_verify($password, $user['user_password'])) {
+                    // Check if the account is verified
+                    if ($user['is_verified'] == 1) {
+                        // Start a session and store user information
+                        session_start();
+                        $_SESSION['user_id'] = $user['student_id'];
+                        $_SESSION['email'] = $user['email'];
 
-                    // Respond with success
-                    echo json_encode(["res" => "success", "msg" => "Login successful"]);
+                        // Respond with success
+                        $response = array('res' => 'success', 'msg' => 'Login successful');
+                        echo json_encode($response);
+                    } else {
+                        // Account not verified
+                        $response = array('res' => 'error', 'msg' => 'Your account is not verified.');
+                        echo json_encode($response);
+                    }
                 } else {
-                    // Account not verified
-                    echo json_encode(["res" => "error", "msg" => "Your account is not verified."]);
+                    // Invalid password
+                    $response = array('res' => 'error', 'msg' => 'Invalid password.');
+                    echo json_encode($response);
                 }
             } else {
-                // Invalid password
-                echo json_encode(["res" => "error", "msg" => "Invalid password."]);
+                // Email not found
+                $response = array('res' => 'error', 'msg' => 'Email not found.');
+                echo json_encode($response);
             }
-        } else {
-            // Email not found
-            echo json_encode(["res" => "error", "msg" => "Email not found."]);
+        } catch (Exception $e) {
+            // Handle any exceptions
+            $response = array('res' => 'error', 'msg' => $e->getMessage());
+            echo json_encode($response);
         }
     } else {
         // Missing email or password
-        echo json_encode(["res" => "error", "msg" => "Email and password are required."]);
+        $response = array('res' => 'error', 'msg' => 'Email and password are required.');
+        echo json_encode($response);
     }
 } else {
     // Invalid request method
-    echo json_encode(["res" => "error", "msg" => "Invalid request method."]);
+    $response = array('res' => 'error', 'msg' => 'Invalid request method.');
+    echo json_encode($response);
 }
 ?>

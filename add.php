@@ -38,7 +38,7 @@ try {
     $stmt->execute([$firstName, $lastName, $email, $gender, $course, $userAddress, $birthdate, $profileImagePath]);
 
     $response = array('res' => 'success', 'msg' => 'Student added successfully');
-    echo json_encode($response);
+    echo json_encode(value: $response);
 } catch (Exception $e) {
     $response = array('res' => 'error', 'msg' => $e->getMessage());
     echo json_encode($response);
