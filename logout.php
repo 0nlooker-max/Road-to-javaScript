@@ -4,7 +4,8 @@
 session_start(); // Start the session
 session_destroy(); // Destroy all session data
 
-// Redirect to the login page with a logout message
-header("Location: login.html?message=logged_out");
+// Respond with a JSON success message
+$response = array('res' => 'success', 'msg' => 'Logout successful');
+echo json_encode($response);
 exit();
 ?>
