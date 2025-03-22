@@ -6,20 +6,29 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-$name = $_POST['name'];
-$address = $_POST['address'];
-$birthdate = $_POST['birthdate'];
+$first_name = $_POST['first_name'];
+$last_name = $_POST['last_name'];
 $email = $_POST['email'];
+$gender = $_POST['gender'];
+$phone_number = $_POST['phone_number'];
+$course = $_POST['course'];
+$user_address = $_POST['user_address'];
+$birthdate = $_POST['birthdate'];
 $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 $verification_code = bin2hex(random_bytes(16)); // Generate a random verification code
 
 // Insert user into the database
-$stmt = $conn->prepare("INSERT INTO users (name, address, birthdate, email, password,
-verification_code) VALUES (:name, :address, :birthdate, :email, :password, :verification_code)");
-$stmt->bindParam(':name', $name);
-$stmt->bindParam(':address', $address);
-$stmt->bindParam(':birthdate', $birthdate);
+$stmt = $connection->prepare("INSERT INTO users (first_name,last_name, email, gender, phone_number, course, user_address,birthdate, user_password,
+verification_code) VALUES (:first_name,:last_name, :email, :gender, :phone_number, :course, :user_address, :birthdate, :password,
+:verification_code)");
+$stmt->bindParam(':first_name', $first_name);
+$stmt->bindParam(':last_name', $last_name);
 $stmt->bindParam(':email', $email);
+$stmt->bindParam(':gender', $gender);
+$stmt->bindParam(':phone_number', $phone_number);
+$stmt->bindParam(':course', $course);
+$stmt->bindParam(':user_address', $user_address);
+$stmt->bindParam(':birthdate', $birthdate);
 $stmt->bindParam(':password', $password);
 $stmt->bindParam(':verification_code', $verification_code);
 
@@ -38,14 +47,14 @@ $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 $mail->Port = 587;
 
 //Recipients
-$mail->setFrom('cosepcarljoshua@gmail.com', 'Mailer');
+$mail->setFrom('rexpagatpat@gmail.com', 'Mailer');
 $mail->addAddress($email); // Add a recipient
 
 // Content
 $mail->isHTML(true);
 $mail->Subject = 'Account Verification';
 $mail->Body = 'Click the link to verify your account: <a
-href="http://localhost/prelim_crud/verify.php?code=' . $verification_code . '">Verify Account</a>';
+href="http://localhost/JavaScript/Road-to-javaScript/verify.php?code=' . $verification_code . '">Verify Account</a>';
 
 $mail->send();
 echo 'Registration successful! Please check your email to verify your account.';
@@ -59,11 +68,42 @@ echo "Error: Could not register user.";
 }
 ?>
 
-<form method="post">
-Name: <input type="text" name="name" required><br>
-Address: <input type="text" name="address" required><br>
-Birthdate: <input type="date" name="birthdate" required><br>
-Email: <input type="email" name="email" required><br>
-Password: <input type="password" name="password" required><br>
-<button type="submit">Register</button>
-</form>
+<!-- filepath: c:\xampp\htdocs\JavaScript\Road-to-javaScript\signup.php
+<form method="post" class="p-4 border rounded shadow-sm bg-light" style="max-width: 400px; margin: auto;">
+    <div class="container">  
+        <h2 class="text-center mb-4">Register</h2>
+    
+        <div class="mb-3">
+            <label for="fname" class="form-label">First Name:</label>
+            <input type="text" id="fname" name="fname" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="lname" class="form-label">Last Name:</label>
+            <input type="text" id="lname" name="lname" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="address" class="form-label">Address:</label>
+            <input type="text" id="address" name="address" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="birthdate" class="form-label">Birthdate:</label>
+            <input type="date" id="birthdate" name="birthdate" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+    </div>
+</form> -->
+
