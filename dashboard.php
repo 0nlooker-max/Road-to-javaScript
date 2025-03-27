@@ -60,7 +60,7 @@ try {
         <div class="row">
             <div class="col-md-12 text-center">
                 <h1>Welcome, <?php echo htmlspecialchars($user_email); ?>!</h1>
-                <p class="lead">This is your dashboard. You can add more features here.</p>
+                <p class="lead">Watapaking sheet.</p>
             </div>
         </div>
 
