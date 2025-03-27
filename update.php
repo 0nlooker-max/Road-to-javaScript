@@ -18,7 +18,7 @@ try {
     $profileImagePath = null;
 
     // Get the existing profile image path from the database
-    $stmt = $connection->prepare("SELECT profile FROM prilimtable WHERE student_id = ?");
+    $stmt = $connection->prepare("SELECT profile_image FROM users WHERE student_id = ?");
     $stmt->execute([$studentId]);
     $existingProfile = $stmt->fetchColumn();
 
@@ -54,7 +54,7 @@ try {
     }
 
     // Update query
-    $stmt = $connection->prepare("UPDATE prilimtable SET first_name = ?, last_name = ?, email = ?, gender = ?, course = ?, user_address = ?, birthdate = ?, profile = ? WHERE student_id = ?");
+    $stmt = $connection->prepare("UPDATE users SET first_name = ?, last_name = ?, email = ?, gender = ?, course = ?, user_address = ?, birthdate = ?, profile_image = ? WHERE student_id = ?");
     $stmt->execute([$firstName, $lastName, $email, $gender, $course, $userAddress, $birthdate, $profileImagePath, $studentId]);
 
     $response = array('res' => 'success', 'msg' => 'Student updated successfully');

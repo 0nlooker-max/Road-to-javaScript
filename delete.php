@@ -8,7 +8,7 @@
 
     $studentId = $_POST['id'];
 
-    $query = "DELETE FROM prilimtable WHERE student_id = ?";
+    $query = "DELETE FROM users WHERE student_id = ?";
     $statement = $connection->prepare($query);
     $res = $statement->execute([$studentId]);
 

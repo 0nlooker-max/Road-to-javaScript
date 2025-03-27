@@ -17,7 +17,7 @@ $(document).ready(function () {
 
             if (response.res === "success") {
                 alert("Login successful!");
-                window.location.href = "dashboard.php"; // Redirect to the dashboard or another page
+                window.location.href = "dashboard.php"; // Redirect to the or another page
             } else {
                 alert("Error: " + response.msg); // Show error message
             }

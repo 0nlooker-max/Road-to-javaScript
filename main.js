@@ -22,7 +22,7 @@ $.ajax({
 
         let profileImg = clone.querySelector(".profile-img");
         if (item.profile) {
-            profileImg.src = item.profile;
+            profileImg.src = item.profile_image;
         } else {
             profileImg.src = "profiles/default.jpg"; // Ensure this default image exists
         }

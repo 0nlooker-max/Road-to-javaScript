@@ -12,6 +12,19 @@ if (!isset($_SESSION['user_id'])) {
 
 // Get the user's email from the session
 $user_email = isset($_SESSION['email']) ? $_SESSION['email'] : "User";
+
+// Include database connection
+require 'connection.php';
+
+// Query to count the total number of users
+try {
+    $stmt = $connection->prepare("SELECT COUNT(*) AS total_users FROM users");
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $total_users = $result['total_users'];
+} catch (Exception $e) {
+    $total_users = "Error"; // Handle errors gracefully
+}
 ?>
 
 <!DOCTYPE html>
@@ -48,6 +61,37 @@ $user_email = isset($_SESSION['email']) ? $_SESSION['email'] : "User";
             <div class="col-md-12 text-center">
                 <h1>Welcome, <?php echo htmlspecialchars($user_email); ?>!</h1>
                 <p class="lead">This is your dashboard. You can add more features here.</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Boxes -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Users</h5>
+                        <p class="card-text">Total Users: <strong><?php echo htmlspecialchars($total_users); ?></strong></p>
+                        <a href="#" class="btn btn-primary">View Users</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Reports</h5>
+                        <p class="card-text">View and generate reports.</p>
+                        <a href="#" class="btn btn-primary">View Reports</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Settings</h5>
+                        <p class="card-text">Update your account settings.</p>
+                        <a href="#" class="btn btn-primary">Go to Settings</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

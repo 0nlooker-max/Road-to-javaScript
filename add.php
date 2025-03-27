@@ -34,7 +34,7 @@ try {
         }
         }
     // Insert query
-    $stmt = $connection->prepare("INSERT INTO prilimtable (first_name, last_name, email, gender, course, user_address, birthdate, profile) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $connection->prepare("INSERT INTO users (first_name, last_name, email, gender, course, user_address, birthdate, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$firstName, $lastName, $email, $gender, $course, $userAddress, $birthdate, $profileImagePath]);
 
     $response = array('res' => 'success', 'msg' => 'Student added successfully');
