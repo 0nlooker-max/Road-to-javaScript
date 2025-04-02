@@ -28,7 +28,35 @@ $(document).ready(function () {
         });
     });
 
-
+    $(document).ready(function () {
+        $("#registerForm").on("submit", function (event) {
+            event.preventDefault(); // Prevent default form submission
+    
+            let formData = $(this).serialize();
+            let submitBtn = $("#submit-btn");
+            submitBtn.prop("disabled", true).text("Processing...");
+    
+            $.ajax({
+                url: "signup.php",
+                type: "POST",
+                data: formData,
+                dataType: "json"
+            }).done(function (response) {
+                if (response.res === "success") {
+                    alert("Registration successful! Check your email.");
+                    location.reload(); // Reload or redirect
+                } else {
+                    alert("Error: " + response.msg);
+                    submitBtn.prop("disabled", false).text("Register");
+                }
+            }).fail(function () {
+                alert("An error occurred.");
+                submitBtn.prop("disabled", false).text("Register");
+            });
+        });
+    });
+    
+    
     // Handle Logout
     $(".logoutBtn").on("click", function (event) {
         event.preventDefault(); // Prevent the default link behavior
