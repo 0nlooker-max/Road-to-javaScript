@@ -1,31 +1,31 @@
 $.ajax({
-    url: "table.php"
+    url: "table.php", // Ensure this URL is correct and points to the server-side script
+    type: "GET",
+    dataType: "json", // Expect JSON data from the server
 }).done(function (data) {
-
-    console.log(data);
-    let result = JSON.parse(data);
+    console.log("Server Response:", data); // Log the server response for debugging
 
     let template = document.querySelector("#produtrowtemplate");
     let parent = document.querySelector("#tableBody");
 
-    result.forEach(item => {
+    data.forEach(item => {
         let clone = template.content.cloneNode(true);
-        clone.querySelector(".tdId").innerHTML = item.student_id;
         clone.querySelector(".fname").innerHTML = item.first_name;
         clone.querySelector(".lname").innerHTML = item.last_name;
-        clone.querySelector(".email").innerHTML = item.email;
-        clone.querySelector(".gender").innerHTML = item.gender;
         clone.querySelector(".course").innerHTML = item.course;
         clone.querySelector(".address").innerHTML = item.user_address;
-        clone.querySelector(".age").innerHTML = calculateAge(item.birthdate);
-        clone.querySelector(".age").setAttribute("data-birthdate", item.birthdate);
 
-        let profileImg = clone.querySelector(".profile-img");
-        if (item.profile) {
-            profileImg.src = item.profile_image;
+        // Check is_verified value and display appropriate text
+        if (item.is_verified == 1) {
+            clone.querySelector(".is_verified").innerHTML = "Verified";
         } else {
-            profileImg.src = "profiles/default.jpg"; // Ensure this default image exists
+            clone.querySelector(".is_verified").innerHTML = "Not Verified";
         }
-        parent.appendChild(clone);
+
+        parent.appendChild(clone); // Append the row to the table body
     });
+}).fail(function (jqXHR, textStatus, errorThrown) {
+    console.error("AJAX Error:", textStatus, errorThrown);
+    console.error("Response Text:", jqXHR.responseText); // Log the response text for debugging
+    alert("Failed to load table data. Please try again.");
 });
