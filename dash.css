@@ -36,7 +36,7 @@
             height: 100%;
         }
 
-        .logout-btn {
+        .logoutBtn {
             margin-top: auto;
         }
 
@@ -87,7 +87,7 @@
     margin: 0;
 }
 
-.logout-btn {
+.logoutBtn {
     margin-top: 10px;
     font-size: 1rem;
     font-weight: bold;

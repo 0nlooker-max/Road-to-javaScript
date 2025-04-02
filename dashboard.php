@@ -84,7 +84,7 @@ try {
                 <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture" class="img-thumbnail profile-img col">
                 <p class="profile-name col"><?php echo htmlspecialchars($first_name . ' ' . $last_name); ?></p>
             </button>
-            <button class="btn btn-danger w-100 logout-btn">Logout</button>
+            <button class="btn btn-danger w-100 logoutBtn">Logout</button>
         </div>
     </div>
     <div class="content">
@@ -206,6 +206,8 @@ try {
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="dashboard.js"></script>
+        <script src="login.js"></script>
+
 </body>
 
 </html>
