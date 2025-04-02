@@ -27,16 +27,26 @@ try {
     if ($user) {
         $first_name = $user['first_name'];
         $last_name = $user['last_name'];
-        $profile_image = $user['profile_image'] ? $user['profile_image'] : 'https://via.placeholder.com/80'; // Default image if none is set
+        $profile_image = $user['profile_image'] ? $user['profile_image'] : '\profiles\fighting meme.webp'; // Default image if none is set
     } else {
         $first_name = "Unknown";
         $last_name = "User";
-        $profile_image = 'https://via.placeholder.com/80'; // Default image
+        $profile_image = '\profiles\fighting meme.webp'; // Default image
     }
 } catch (Exception $e) {
     $first_name = "Error";
     $last_name = "User";
-    $profile_image = 'https://via.placeholder.com/80'; // Default image
+    $profile_image = '\profiles\fighting meme.webp'; // Default image
+}
+
+// Query to count the total number of users
+try {
+    $stmt = $connection->prepare("SELECT COUNT(*) AS total_users FROM users");
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $total_users = $result['total_users'];
+} catch (Exception $e) {
+    $total_users = "Error"; // Handle errors gracefully
 }
 ?>
 
@@ -60,12 +70,13 @@ try {
             <a href="#" class="bi bi-people"> Users</a>
             <a href="#" class="bi bi-gear"> Settings</a>
         </div>
-        <div>
-            <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture">
-            <p><?php echo htmlspecialchars($first_name . ' ' . $last_name); ?></p>
+        <div class="row">
+            <button type="button" class="btn btn-link p-0 profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture" class="img-thumbnail profile-img col">
+                <p class="profile-name col"><?php echo htmlspecialchars($first_name . ' ' . $last_name); ?></p>
+            </button>
             <button class="btn btn-danger w-100 logout-btn">Logout</button>
         </div>
-
     </div>
     <div class="content">
         <div class="dashboard-header">
@@ -77,7 +88,7 @@ try {
                 <div class="card w-100">
                     <div class="card-body">
                         <h5 class="card-title">Total Users</h5>
-                        <p class="card-text">342</p>
+                        <p class="card-text"><?php echo htmlspecialchars($total_users); ?></p>
                     </div>
                 </div>
             </div>
@@ -126,6 +137,34 @@ try {
                         </template>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <!-- Profile Edit Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editProfileForm">
+                            <div class="mb-3">
+                                <label for="editFirstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="editFirstName" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editLastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="editLastName" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editProfileImage" class="form-label">Profile Image</label>
+                                <input type="file" class="form-control" id="editProfileImage" name="profile_image">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
         <script>
