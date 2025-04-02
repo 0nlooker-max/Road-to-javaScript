@@ -48,7 +48,7 @@ try {
     $profile_image = '\profiles\fighting meme.webp'; // Default image
 }
 
-// Query to count the total number of users
+
 try {
     $stmt = $connection->prepare("SELECT COUNT(*) AS total_users FROM users");
     $stmt->execute();
@@ -129,7 +129,7 @@ try {
                             <th scope="col">LastName</th>
                             <th scope="col">Course</th>
                             <th scope="col">Address</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Status</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -141,7 +141,6 @@ try {
                                 <td class="course">Course</td>
                                 <td class="address">Address</td>
                                 <td class="is_verified">Status</td>
-                                <td><button type="button" class="btn btn-danger delete-btn" data-id="">Delete</button></td>
                             </tr>
                         </template>
                     </tbody>

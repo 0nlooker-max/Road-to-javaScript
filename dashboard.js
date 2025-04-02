@@ -18,10 +18,11 @@ $.ajax({
         // Check is_verified value and display appropriate text
         if (item.is_verified == 1) {
             clone.querySelector(".is_verified").innerHTML = "Verified";
+            clone.querySelector(".is_verified").classList.add("bg-success", "text-white"); // Add green background and white text
         } else {
             clone.querySelector(".is_verified").innerHTML = "Not Verified";
+            clone.querySelector(".is_verified").classList.add("bg-danger", "text-white"); // Add red background and white text
         }
-
         parent.appendChild(clone); // Append the row to the table body
     });
 }).fail(function (jqXHR, textStatus, errorThrown) {
