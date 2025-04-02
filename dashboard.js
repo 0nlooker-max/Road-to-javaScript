@@ -29,6 +29,7 @@ $.ajax({
     console.error("Response Text:", jqXHR.responseText); // Log the response text for debugging
     alert("Failed to load table data. Please try again.");
 });
+
 $(document).ready(function () {
     // Handle profile edit form submission
     $("#editProfileForm").on("submit", function (event) {
@@ -36,7 +37,7 @@ $(document).ready(function () {
         let formData = new FormData(this);
 
         $.ajax({
-            url: "edit_profile.php", // Backend script to handle profile updates
+            url: "edit_profile.php",
             type: "POST",
             data: formData,
             processData: false,
@@ -44,13 +45,13 @@ $(document).ready(function () {
             dataType: "json"
         }).done(function (response) {
             if (response.res === "success") {
-                alert("Profile updated successfully!");
+                alert(response.msg); // Show success message
                 location.reload(); // Reload the page to reflect changes
             } else {
-                alert("Error: " + response.msg);
+                alert("Error: " + response.msg); // Show error message
             }
-        }).fail(function () {
-            alert("An error occurred while updating the profile.");
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            alert("An error occurred: " + textStatus + " - " + errorThrown);
         });
     });
 });
