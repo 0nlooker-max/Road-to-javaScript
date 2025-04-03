@@ -97,26 +97,24 @@ try {
             <div class="col-md-4 equal-height">
                 <div class="card w-100">
                     <div class="card-body">
-                        <h5 class="card-title">Verified Users</h5>
-                        <p class="card-text"><?php echo htmlspecialchars($total_verified_users); ?></p>
+                        <h5 class="card-title "> Verified Users</h5>
+                        <p class="card-text bi-people"> <?php echo htmlspecialchars($total_verified_users); ?></p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 equal-height">
                 <div class="card w-100">
                     <div class="card-body">
-                        <h5 class="card-title">Status</h5>
-                        <button class="btn btn-success">Active</button>
-                        <button class="btn btn-danger">Inactive</button>
+                        <h5 class="card-title">Active Session</h5>
+                        <p class="bi-cup-hot-fill"> 500</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 equal-height">
                 <div class="card w-100">
                     <div class="card-body">
-                        <h5 class="card-title">Status</h5>
-                        <button class="btn btn-success">Active</button>
-                        <button class="btn btn-danger">Inactive</button>
+                        <h5 class="card-title"> Status</h5>
+                        <p class="bi-heart-pulse-fill"> !Good</p>
                     </div>
                 </div>
             </div>
