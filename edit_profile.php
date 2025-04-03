@@ -8,7 +8,7 @@ require 'connection.php';
 
 session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     $user_id = $_SESSION['user_id'];
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];

@@ -49,13 +49,14 @@ try {
 }
 
 
+
 try {
-    $stmt = $connection->prepare("SELECT COUNT(*) AS total_users FROM users");
+    $stmt = $connection->prepare("SELECT COUNT(*) AS total_verified_users FROM users WHERE is_verified = 1");
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $total_users = $result['total_users'];
+    $total_verified_users = $result['total_verified_users'];
 } catch (Exception $e) {
-    $total_users = "Error"; // Handle errors gracefully
+    $total_verified_users = "Error"; // Handle errors gracefully
 }
 ?>
 
@@ -96,8 +97,8 @@ try {
             <div class="col-md-4 equal-height">
                 <div class="card w-100">
                     <div class="card-body">
-                        <h5 class="card-title">Total Users</h5>
-                        <p class="card-text"><?php echo htmlspecialchars($total_users); ?></p>
+                        <h5 class="card-title">Verified Users</h5>
+                        <p class="card-text"><?php echo htmlspecialchars($total_verified_users); ?></p>
                     </div>
                 </div>
             </div>
@@ -147,53 +148,56 @@ try {
                 </table>
             </div>
         </div>
-    
+
         <!-- Profile Edit Modal -->
-        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="row">
+                        <div class="mb-3 col">
+                            <label for="editFirstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="editFirstName" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" readonly required>
+                        </div>
+                        <div class="mb-3 col">
+                            <label for="editLastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="editLastName" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" readonly required>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <form id="editProfileForm">
-                            <div class="row">
-                                <div class="mb-3 col">
-                                    <label for="editFirstName" class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="editFirstName" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required>
-                                </div>
-                                <div class="mb-3 col">
-                                    <label for="editLastName" class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="editLastName" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="mb-3 col">
-                                    <label for="editCourse" class="form-label">Course</label>
-                                    <input type="text" class="form-control" id="editCourse" name="course" value="<?php echo htmlspecialchars($course); ?>" required>
-                                </div>
-                                <div class="mb-3 col">
-                                    <label for="editPnum" class="form-label">Phone Number</label>
-                                    <input type="text" class="form-control" id="editPnum" name="phone_number" value="<?php echo htmlspecialchars($phone_number); ?>" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="mb-3 col">
-                                    <label for="editAddress" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="editAddress" name="user_address" value="<?php echo htmlspecialchars($user_address); ?>" required>
-                                </div>
-                                <div class="mb-3 col">
-                                    <label for="editProfileImage" class="form-label">Profile Image</label>
-                                    <input type="file" class="form-control" id="editProfileImage" name="profile_image">
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </form>
+                    <div class="row">
+                        <div class="mb-3 col">
+                            <label for="editCourse" class="form-label">Course</label>
+                            <input type="text" class="form-control" id="editCourse" name="course" value="<?php echo htmlspecialchars($course); ?>" readonly required>
+                        </div>
+                        <div class="mb-3 col">
+                            <label for="editPnum" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="editPnum" name="phone_number" value="<?php echo htmlspecialchars($phone_number); ?>" readonly required>
+                        </div>
                     </div>
-                </div>
+                    <div class="row">
+                        <div class="mb-3 col">
+                            <label for="editAddress" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="editAddress" name="user_address" value="<?php echo htmlspecialchars($user_address); ?>" readonly required>
+                        </div>
+                        <div class="mb-3 col">
+                            <label for="editProfileImage" class="form-label">Profile Image</label>
+                            <input type="file" class="form-control" id="editProfileImage" name="profile_image" disabled>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="editToggleBtn">Edit</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
+</div>
         <script>
             function updateDateTime() {
                 const now = new Date();

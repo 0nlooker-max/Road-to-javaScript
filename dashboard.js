@@ -31,28 +31,55 @@ $.ajax({
     alert("Failed to load table data. Please try again.");
 });
 
-$(document).ready(function () {
-    // Handle profile edit form submission
-    $("#editProfileForm").on("submit", function (event) {
-        event.preventDefault();
-        let formData = new FormData(this);
 
-        $.ajax({
-            url: "edit_profile.php",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: "json"
-        }).done(function (response) {
-            if (response.res === "success") {
-                alert(response.msg); // Show success message
-                location.reload(); // Reload the page to reflect changes
-            } else {
-                alert("Error: " + response.msg); // Show error message
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            alert("An error occurred: " + textStatus + " - " + errorThrown);
-        });
+// Add the new code for the edit modal functionality
+document.addEventListener("DOMContentLoaded", function () {
+    const editToggleBtn = document.getElementById("editToggleBtn");
+    const editProfileForm = document.getElementById("editProfileForm");
+    const inputs = editProfileForm.querySelectorAll("input");
+
+    let isEditing = false; // Track whether the form is in edit mode
+
+    editToggleBtn.addEventListener("click", function () {
+        if (!isEditing) {
+            // Enable input fields for editing
+            inputs.forEach(input => {
+                input.removeAttribute("readonly");
+                input.removeAttribute("disabled");
+            });
+            editToggleBtn.textContent = "Save"; // Change button text to "Save"
+            isEditing = true;
+        } else {
+            // Submit the form to update the profile
+            const formData = new FormData(editProfileForm);
+
+            fetch("edit_profile.php", {
+                method: "POST",
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.res === "success") {
+                        alert(data.msg);
+                        location.reload(); // Reload the page to reflect changes
+                    } else {
+                        alert("Error: " + data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while updating the profile.");
+                });
+
+            // Disable input fields after saving
+            inputs.forEach(input => {
+                input.setAttribute("readonly", "true");
+                if (input.type === "file") {
+                    input.setAttribute("disabled", "true");
+                }
+            });
+            editToggleBtn.textContent = "Edit"; // Change button text back to "Edit"
+            isEditing = false;
+        }
     });
 });
