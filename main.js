@@ -8,7 +8,7 @@ $.ajax({
     let template = document.querySelector("#produtrowtemplate");
     let parent = document.querySelector("#tableBody");
 
-    result.forEach(item => {
+    result.forEach(item => {    
         let clone = template.content.cloneNode(true);
         clone.querySelector(".tdId").innerHTML = item.student_id;
         clone.querySelector(".fname").innerHTML = item.first_name;
