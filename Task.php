@@ -76,9 +76,9 @@ try {
     <div class="sidebar">
         <div>
             <h4>Dashboard Menu</h4>
-            <a href="dashboard.php" class="bi bi-house"> Home</a>
+            <a href="dashboard.php" class="home bi bi-house"> Home</a>
             <a href="#" class="bi bi-people"> Users</a>
-            <a href="Task.php" class="bi bi-people"> Task</a>
+            <a href="Task.php" class="task bi bi-people"> Task</a>
             <a href="#" class="bi bi-gear"> Settings</a>
         </div>
         <div class="row">
@@ -91,45 +91,66 @@ try {
     </div>
     <div class="content">
         <div class="dashboard-header">
-            <h3>Dashboard</h3>
+            <h3>Assign Task</h3>
             <p id="dateTime"></p>
         </div>
-        <div class="row">
-            <div class="col-md-4 equal-height">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <h5 class="card-title "> Verified Users</h5>
-                        <p class="card-text bi-people"> <?php echo htmlspecialchars($total_verified_users); ?></p>
+
+        <div class="container mt-3">
+            <form id="taskForm" class="shadow p-4 mb-5 bg-white rounded">
+                <h4 class="mb-4">Task Manager</h4>
+
+                <div class="row">
+                    <div class="mb-3 col">
+                        <input type="text" class="form-control" id="taskTitle" name="task_title" placeholder="Task Title" required>
+                    </div>
+                    <div class="mb-3 col">
+                        <input type="text" class="form-control" id="taskDescription" name="task_description" placeholder="Task Description" required>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 equal-height">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Active Session</h5>
-                        <p class="bi-cup-hot-fill"> 500</p>
+
+                <div class="row">
+                    <div class="mb-3 col">
+                        <select class="form-control" id="assignedStudent" name="assigned_student" required>
+                            <option value="" disabled selected>Select a Student</option>
+                            <?php
+                            try {
+                                $stmt = $connection->prepare("SELECT student_id, first_name, last_name FROM prilimtable");
+                                $stmt->execute();
+                                $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                foreach ($students as $student) {
+                                    echo '<option value="' . htmlspecialchars($student['student_id']) . '">'
+                                        . htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) .
+                                        '</option>';
+                                }
+                            } catch (Exception $e) {
+                                echo '<option value="">Error fetching students</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="mb-3 col">
+                        <input type="datetime-local" class="form-control" id="dueDate" name="due_date" required>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 equal-height">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <h5 class="card-title"> Status</h5>
-                        <p class="bi-heart-pulse-fill"> !Good</p>
-                    </div>
+
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" id="AddTToggleBtn">Add Task</button>
                 </div>
-            </div>
+            </form>
         </div>
+
         <div class="container mt-5 ">
             <div class="row">
                 <table class="table table-light shadow p-3 mb-5 bg-white rounded">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">FirstName</th>
-                            <th scope="col">LastName</th>
-                            <th scope="col">Course</th>
-                            <th scope="col">Address</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Deadline</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Action</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -141,6 +162,9 @@ try {
                                 <td class="course">Course</td>
                                 <td class="address">Address</td>
                                 <td class="is_verified">Status</td>
+                                <td><button type="button" class="btn btn-danger" id="delete">Delete</button></td>
+                                <td><button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#editStudentModal">Edit</button></td>
+                                <td><button type="button" class="btn btn-danger" id="delete">confirm</button></td>
                             </tr>
                         </template>
                     </tbody>

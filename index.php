@@ -1,18 +1,4 @@
-<?php
-// filepath: c:\xampp\htdocs\JavaScript\Road-to-javaScript\dashboard.php
 
-session_start(); // Start the session
-
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if not logged in
-    header("Location: login.html?message=not_logged_in");
-    exit();
-}
-
-// Get the user's email from the session
-$user_email = isset($_SESSION['email']) ? $_SESSION['email'] : "User";
-?>
 
 <!DOCTYPE html>
 <html lang="en">
