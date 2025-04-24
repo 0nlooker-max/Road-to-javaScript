@@ -25,8 +25,6 @@ $.ajax({
 });
 
 
-
-
  // Add Student
  $("#addStudentForm").on("submit", function (event) {
     event.preventDefault();
