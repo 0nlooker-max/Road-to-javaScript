@@ -32,7 +32,7 @@ $.ajax({
     let formData = new FormData(this);
 
     $.ajax({
-        url: "add.php",
+        url: "Task_add.php",
         type: "POST",
         data: formData,
         contentType: false,

@@ -161,7 +161,7 @@ try {
                                 <td class="disc">description</td>
                                 <td class="deads">deadline</td>
                                 <td class="stat">Status</td>
-                                <td><button type="button" class="btn btn-danger" id="delete">Delete</button></td>
+                                <td><button type="button" class="btn btn-danger" id="delete">view</button></td>
                                 <td><button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#editStudentModal">Edit</button></td>
                                 <td><button type="button" class="btn btn-danger" id="delete">confirm</button></td>
                             </tr>
