@@ -96,7 +96,7 @@ try {
         </div>
 
         <form id="taskForm" class="shadow p-4 mb-5 bg-white rounded">
-            <h4 class="mb-4">Jove pisuttt</h4>
+            <h4 class="mb-4">Task Manager</h4>
 
             <div class="row">
                 <div class="mb-3 col">

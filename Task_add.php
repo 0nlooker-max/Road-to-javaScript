@@ -1,46 +1,26 @@
 <?php
 header('Content-Type: application/json');
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require 'connection.php';
 
-include 'connection.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $task_title = $_POST['task_title'];
+    $task_description = $_POST['task_description'];
+    $assigned_students = $_POST['assigned_student']; // This will be an array
+    $due_date = $_POST['due_date'];
 
-try {
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
-    $email = $_POST['email'];
-    $gender = $_POST['gender'];
-    $course = $_POST['course'];
-    $userAddress = $_POST['userAddress'];
-    $birthdate = $_POST['birthdate'];
-    $profileImagePath = null;
-
-    if (!empty($_FILES["profileImage"]["name"])) {
-        $uploadDir = "profiles/"; // Folder where images will be stored
-        if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0777, true); // Create folder if it doesn&#39;t exist
+    try {
+        // Insert each student-task assignment into the database
+        foreach ($assigned_students as $student_id) {
+            $stmt = $connection->prepare("INSERT INTO tasks (task_title, discription, student_id, deadline, status) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$task_title, $task_description, $student_id, $due_date, 'Pending']);
         }
-        
-        $imageName = basename($_FILES["profileImage"]["name"]);
-        $uploadFile = $uploadDir . $imageName;
-        
-        if (move_uploaded_file($_FILES["profileImage"]["tmp_name"], $uploadFile)) {
-        $profileImagePath = $uploadFile; // Save this path in the database
-        } else {
-        
-        echo json_encode(["status" => "error", "message" => "Image upload failed."]);
-        exit;
-        }
-        }
-    // Insert query
-    $stmt = $connection->prepare("INSERT INTO users (first_name, last_name, email, gender, course, user_address, birthdate, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$firstName, $lastName, $email, $gender, $course, $userAddress, $birthdate, $profileImagePath]);
 
-    $response = array('res' => 'success', 'msg' => 'Student added successfully');
-    echo json_encode(value: $response);
-} catch (Exception $e) {
-    $response = array('res' => 'error', 'msg' => $e->getMessage());
-    echo json_encode($response);
+        echo json_encode(['res' => 'success', 'msg' => 'Task added successfully.']);
+    } catch (Exception $e) {
+        echo json_encode(['res' => 'error', 'msg' => 'Failed to add task: ' . $e->getMessage()]);
+    }
+} else {
+    echo json_encode(['res' => 'error', 'msg' => 'Invalid request method.']);
 }
 ?>

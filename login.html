@@ -97,10 +97,18 @@
                                 <input type="date" id="birthdate" name="birthdate" class="form-control" required>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="mb-3 col">
                                 <label for="password" class="form-label">Password:</label>
                                 <input type="password" id="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="mb-3 col">
+                                <label for="role" class="form-label">role:</label>
+                                <select id="role" name="role" class="form-select" required>
+                                    <option value="Male">admin</option>
+                                    <option value="Female">student</option>
+                                </select>
                             </div>
                         </div>
                         <button id="submit-btn" type="submit" class="btn btn-primary w-100">Register</button>

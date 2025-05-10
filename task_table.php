@@ -2,7 +2,7 @@
     include("connection.php");
     
     try{
-        $query = "SELECT * FROM task LIMIT 10";
+        $query = "SELECT * FROM tasks LIMIT 10";
         $statement = $connection->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);

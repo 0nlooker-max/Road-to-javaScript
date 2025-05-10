@@ -24,32 +24,58 @@ $.ajax({
     alert("Failed to load table data. Please try again.");
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const taskForm = document.getElementById("taskForm");
+    const addTaskButton = document.getElementById("AddTToggleBtn");
 
- // Add Student
- $("#addStudentForm").on("submit", function (event) {
-    event.preventDefault();
+    addTaskButton.addEventListener("click", function () {
+        const formData = new FormData(taskForm);
 
-    let formData = new FormData(this);
+        // Send AJAX request to add the task
+        $.ajax({
+            url: "Task_add.php", // Backend script to handle task addition
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: "json",
+        })
+            .done(function (response) {
+                if (response.res === "success") {
+                    alert(response.msg);
+                    location.reload(); // Reload the page to reflect the new task
+                } else {
+                    alert("Error: " + response.msg);
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Error:", textStatus, errorThrown);
+                alert("Failed to add the task. Please try again.");
+            });
+    });
+});
 
-    $.ajax({
-        url: "Task_add.php",
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: "json"
-    }).done(function (result) {
-        console.log("Server Response:", result);
 
-        if (result.res === "success") {
-            alert("Student added successfully");
-            $("#addStudentModal").modal("hide");
-            window.location.reload();
-        } else {
-            alert("Error: " + result.msg);
-        }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.log("AJAX Error:", textStatus, errorThrown);
-        console.log("Response Text:", jqXHR.responseText); // Log the response text
+document.addEventListener("DOMContentLoaded", function () {
+    const assignedStudentSelect = document.getElementById("assignedStudent");
+
+    // Initialize Choices.js
+    const choices = new Choices(assignedStudentSelect, {
+        removeItemButton: true, // Allow removing selected items
+        placeholder: true,
+        placeholderValue: "Select Students",
+        searchPlaceholderValue: "Search Students",
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const assignedStudentSelect = document.getElementById("assignedStudent");
+
+    // Initialize Choices.js
+    const choices = new Choices(assignedStudentSelect, {
+        removeItemButton: true, // Allow removing selected items
+        placeholder: true,
+        placeholderValue: "Select Students",
+        searchPlaceholderValue: "Search Students",
     });
 });

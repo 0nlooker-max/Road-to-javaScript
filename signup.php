@@ -15,12 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user_address = $_POST['user_address'];
     $birthdate = $_POST['birthdate'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $role = $_POST['role'];
     $verification_code = bin2hex(random_bytes(16)); // Generate a secure verification code
 
     // Insert user into the database
     $stmt = $connection->prepare("INSERT INTO users 
-        (first_name, last_name, email, gender, phone_number, course, user_address, birthdate, user_password, verification_code) 
-        VALUES (:first_name, :last_name, :email, :gender, :phone_number, :course, :user_address, :birthdate, :password, :verification_code)");
+        (first_name, last_name, email, gender, phone_number, course, user_address, birthdate, user_password, verification_code, role) 
+        VALUES (:first_name, :last_name, :email, :gender, :phone_number, :course, :user_address, :birthdate, :password,  :verification_code, :role)");
     
     $stmt->bindParam(':first_name', $first_name);
     $stmt->bindParam(':last_name', $last_name);
@@ -32,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':birthdate', $birthdate);
     $stmt->bindParam(':password', $password);
     $stmt->bindParam(':verification_code', $verification_code);
+    $stmt->bindParam(':role', $role);
 
     if ($stmt->execute()) {
         // Send verification email
