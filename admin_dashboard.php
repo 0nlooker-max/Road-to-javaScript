@@ -3,10 +3,10 @@
 
 session_start(); // Start the session
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if not logged in
-    header("Location: login.html?message=not_logged_in");
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Redirect to login page if not logged in or not an admin
+    header("Location: login.php?message=not_logged_in");
     exit();
 }
 

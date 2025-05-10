@@ -23,9 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         session_start();
                         $_SESSION['user_id'] = $user['student_id'];
                         $_SESSION['email'] = $user['email'];
+                        $_SESSION['role'] = $user['role']; // Store the user's role
 
-                        // Respond with success
-                        $response = array('res' => 'success', 'msg' => 'Login successful');
+                        // Respond based on the user's role
+                        if ($user['role'] === 'admin') {
+                            $response = array('res' => 'success', 'msg' => 'Login successful', 'role' => 'admin');
+                        } else {
+                            $response = array('res' => 'success', 'msg' => 'Login successful', 'role' => 'student');
+                        }
                         echo json_encode($response);
                     } else {
                         // Account not verified

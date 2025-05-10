@@ -2,30 +2,31 @@ $(document).ready(function () {
     console.log("Document is ready");
 
     // Handle Login Form Submission
-    $("#loginForm").on("submit", function (event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        let formData = $(this).serialize(); // Serialize form data
-
-        $.ajax({
-            url: "login.php", // The server-side script to handle login
-            type: "POST",
-            data: formData,
-            dataType: "json"
-        }).done(function (response) {
-            console.log("Server Response:", response);
-
-            if (response.res === "success") {
-                alert("Login successful!");
-                window.location.href = "dashboard.php"; // Redirect to the or another page
-            } else {
-                alert("Error: " + response.msg); // Show error message
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log("AJAX Error:", textStatus, errorThrown);
-            console.log("Response Text:", jqXHR.responseText); // Log the response text
-            alert("An error occurred while processing your request.");
-        });
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+    
+        const formData = new FormData(this);
+    
+        fetch("login.php", {
+            method: "POST",
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.res === "success") {
+                    if (data.role === "admin") {
+                        window.location.href = "admin_dashboard.php"; // Redirect to admin dashboard
+                    } else if (data.role === "student") {
+                        window.location.href = "student_dashboard.php"; // Redirect to student dashboard
+                    }
+                } else {
+                    alert(data.msg); // Show error message
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
     });
 
     $(document).ready(function () {
