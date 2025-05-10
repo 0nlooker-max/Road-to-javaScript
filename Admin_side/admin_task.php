@@ -76,9 +76,9 @@ try {
     <div class="sidebar">
         <div>
             <h4>Dashboard Menu</h4>
-            <a href="dashboard.php" class="home bi bi-house"> Home</a>
+            <a href="admin_dashboard.php" class="home bi bi-house"> Home</a>
             <a href="#" class="bi bi-people"> Users</a>
-            <a href="Task.php" class="task bi bi-people"> Task</a>
+            <a href="admin_task.php" class="task bi bi-people"> Task</a>
             <a href="#" class="bi bi-gear"> Settings</a>
         </div>
         <div class="row">
