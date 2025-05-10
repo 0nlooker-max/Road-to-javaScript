@@ -4,9 +4,9 @@ $(document).ready(function () {
     // Handle Login Form Submission
     document.getElementById("loginForm").addEventListener("submit", function (e) {
         e.preventDefault();
-    
+
         const formData = new FormData(this);
-    
+
         fetch("login.php", {
             method: "POST",
             body: formData,
@@ -15,9 +15,9 @@ $(document).ready(function () {
             .then(data => {
                 if (data.res === "success") {
                     if (data.role === "admin") {
-                        window.location.href = "admin_dashboard.php"; // Redirect to admin dashboard
+                        window.location.href = "../Road-to-javaScript/Admin_side/admin_dashboard.php"; // Redirect to admin dashboard
                     } else if (data.role === "student") {
-                        window.location.href = "student_dashboard.php"; // Redirect to student dashboard
+                        window.location.href = "../Student_side/student_dashboard.php"; // Redirect to student dashboard
                     }
                 } else {
                     alert(data.msg); // Show error message
@@ -32,11 +32,11 @@ $(document).ready(function () {
     $(document).ready(function () {
         $("#registerForm").on("submit", function (event) {
             event.preventDefault(); // Prevent default form submission
-    
+
             let formData = $(this).serialize();
             let submitBtn = $("#submit-btn");
             submitBtn.prop("disabled", true).text("Processing...");
-    
+
             $.ajax({
                 url: "signup.php",
                 type: "POST",
@@ -56,8 +56,8 @@ $(document).ready(function () {
             });
         });
     });
-    
-    
+
+
     // Handle Logout
     $(".logoutBtn").on("click", function (event) {
         event.preventDefault(); // Prevent the default link behavior
