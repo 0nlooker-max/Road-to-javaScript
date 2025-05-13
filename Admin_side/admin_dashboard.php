@@ -6,7 +6,7 @@ session_start(); // Start the session
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     // Redirect to login page if not logged in or not an admin
-    header("Location: login.php?message=not_logged_in");
+    header("Location: ../login.html?message=not_logged_in");
     exit();
 }
 
@@ -209,7 +209,7 @@ try {
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="dashboard.js"></script>
-        <script src="login.js"></script>
+        
 
 </body>
 

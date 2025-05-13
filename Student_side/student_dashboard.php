@@ -4,7 +4,7 @@
 session_start(); // Start the session
 
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     // Redirect to login page if not logged in or not an admin
     header("Location: login.php?message=not_logged_in");
     exit();

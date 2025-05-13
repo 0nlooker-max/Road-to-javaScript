@@ -17,7 +17,7 @@ $(document).ready(function () {
                     if (data.role === "admin") {
                         window.location.href = "../Road-to-javaScript/Admin_side/admin_dashboard.php"; // Redirect to admin dashboard
                     } else if (data.role === "student") {
-                        window.location.href = "../Student_side/student_dashboard.php"; // Redirect to student dashboard
+                        window.location.href = "../Road-to-javaScript/Student_side/student_dashboard.php"; // Redirect to student dashboard
                     }
                 } else {
                     alert(data.msg); // Show error message

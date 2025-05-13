@@ -6,7 +6,7 @@ session_start(); // Start the session
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     // Redirect to login page if not logged in
-    header("Location: login.html?message=not_logged_in");
+    header("Location: ../login.html?message=not_logged_in");
     exit();
 }
 
@@ -146,7 +146,7 @@ try {
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
                             <th scope="col">Deadline</th>
-                            <th scope="col">Status</th>
+                           
                             <th scope="col">Action</th>
                             <th></th>
                         </tr>
@@ -157,10 +157,9 @@ try {
                                 <td class="title">title</td>
                                 <td class="disc">description</td>
                                 <td class="deads">deadline</td>
-                                <td class="stat">Status</td>
+                               
                                 <td><button type="button" class="btn btn-warning bi bi-eye me-2" id="view"></button>
                                     <button type="button" class="btn btn-primary bi bi-pencil-square me-2 edit-btn" data-bs-toggle="modal" data-bs-target="#editStudentModal"></button>
-                                    <button type="button" class="btn btn-danger bi bi-trash" id="delete"></button>
                                 </td>
 
                             </tr>
@@ -231,7 +230,8 @@ try {
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="task.js"></script>
-        <script src="login.js"></script>
+        <script src="dashboard.js"></script>
+    
 
 </body>
 

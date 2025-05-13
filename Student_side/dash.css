@@ -1,0 +1,110 @@
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background-color: #343a40;
+            color: white;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            height: 100%;
+        }
+
+        .logoutBtn {
+            margin-top: auto;
+        }
+
+        .img-thumbnail{
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .dashboard-header {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .equal-height {
+            display: flex;
+            align-items: stretch;
+        }
+/* Profile Section Styling */
+.profile-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.profile-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.profile-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+}
+
+.logoutBtn {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.bg-success {
+    background-color: #28a745 !important; /* Green */
+    color: white !important;
+    height: 50px !important;
+    width: 100px;
+    text-align: center;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important; /* Red */
+    color: white !important;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+}

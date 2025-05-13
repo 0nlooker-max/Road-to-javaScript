@@ -14,7 +14,6 @@ $.ajax({
         clone.querySelector(".title").textContent = item.task_title;
         clone.querySelector(".disc").textContent = item.discription; // Confirm the key name is correct
         clone.querySelector(".deads").textContent = item.deadline;
-        clone.querySelector(".stat").textContent = item.status;
         parent.appendChild(clone);
     });
 })
