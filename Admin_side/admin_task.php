@@ -69,6 +69,7 @@ try {
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <link rel="stylesheet" href="dash.css">
 </head>
 
@@ -95,48 +96,32 @@ try {
             <p id="dateTime"></p>
         </div>
 
-        <form id="taskForm" class="shadow p-4 mb-5 bg-white rounded">
-            <h4 class="mb-4">Task Manager</h4>
-
-            <div class="row">
-                <div class="mb-3 col">
-                    <input type="text" class="form-control" id="taskTitle" name="task_title" placeholder="Task Title" required>
-                </div>
-                <div class="mb-3 col">
-                    <input type="text" class="form-control" id="taskDescription" name="task_description" placeholder="Task Description" required>
-                </div>
+        <div class="card shadow mb-4">
+            <div class="card-header">Task Manager</div>
+            <div class="card-body">
+                <form id="taskForm">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="taskTitle" name="task_title" placeholder="Task Title" required>
+                        </div>
+                        <div class="col-6">
+                            <textarea class="form-control" id="taskDescription" name="task_description" placeholder="Task Description" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <select class="form-control" id="assignedStudent" name="assigned_student[]" multiple>
+                                <option value="" disabled>Select Students</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <input type="datetime-local" class="form-control" id="deadlineInput" name="due_date" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </form>
             </div>
-
-            <div class="row">
-                <div class="mb-3 col">
-                    <select class="form-control" id="assignedStudent" name="assigned_student[]" multiple required>
-                        <option value="" disabled>Select Students</option>
-                        <?php
-                        try { 
-                            $stmt = $connection->prepare("SELECT student_id, first_name, last_name FROM prilimtable");
-                            $stmt->execute();
-                            $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                            foreach ($students as $student) {
-                                echo '<option value="' . htmlspecialchars($student['student_id']) . '">'
-                                    . htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) .
-                                    '</option>';
-                            }
-                        } catch (Exception $e) {
-                            echo '<option value="">Error fetching students</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="mb-3 col">
-                    <input type="datetime-local" class="form-control" id="dueDate" name="due_date" required>
-                </div>
-            </div>
-
-            <div class="text-end">
-                <button type="button" class="btn btn-primary" id="AddTToggleBtn">Add Task</button>
-            </div>
-        </form>
+        </div>
 
         <div class="container mt-5 ">
             <div class="row">
@@ -146,7 +131,7 @@ try {
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
                             <th scope="col">Deadline</th>
-                           
+
                             <th scope="col">Action</th>
                             <th></th>
                         </tr>
@@ -157,9 +142,9 @@ try {
                                 <td class="title">title</td>
                                 <td class="disc">description</td>
                                 <td class="deads">deadline</td>
-                               
-                                <td><button type="button" class="btn btn-warning bi bi-eye me-2" id="view"></button>
-                                    <button type="button" class="btn btn-primary bi bi-pencil-square me-2 edit-btn" data-bs-toggle="modal" data-bs-target="#editStudentModal"></button>
+
+                                <td><button type="button" class="btn btn-warning bi bi-eye me-2" id="view" data-task-id="1"></button>
+                                    <button type="button" class="btn btn-primary bi bi-pencil-square me-2 edit-btn" data-bs-toggle="modal" data-bs-target="#editTaskModal" data-task-id="1"></button>
                                 </td>
 
                             </tr>
@@ -169,6 +154,94 @@ try {
             </div>
         </div>
 
+        <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editTaskForm">
+                            <div class="mb-3">
+                                <label for="editTaskTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="editTaskTitle" name="task_title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editTaskDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="editTaskDescription" name="task_description" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editTaskDeadline" class="form-label">Deadline</label>
+                                <input type="datetime-local" class="form-control" id="editTaskDeadline" name="task_deadline" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editAssignedStudents" class="form-label">Assign Students</label>
+                                <select class="form-control" id="editAssignedStudents" name="assigned_students[]" multiple>
+                                    <!-- Options will be dynamically populated -->
+                                </select>
+                            </div>
+                            <input type="hidden" id="editTaskId">
+
+                            <div class="mb-3">
+                                <label>Assigned Students:</label>
+                                <div id="assignedStudentsList" class="d-flex flex-wrap">
+                                    <!-- Assigned students will be dynamically populated -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveTaskChanges">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="taskDetailsModalLabel">Task Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Title:</strong> <span id="modalTaskTitle"></span></p>
+                        <p><strong>Description:</strong> <span id="modalTaskDescription"></span></p>
+                        <p><strong>Deadline:</strong> <span id="modalTaskDeadline"></span></p>
+
+                        <h6 class="text-danger">Pending</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>File</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingAssignments"></tbody>
+                        </table>
+
+                        <h6 class="text-success">Submitted</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>File</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="submittedAssignments"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Profile Edit Modal -->
         <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -226,12 +299,27 @@ try {
             updateDateTime();
             setInterval(updateDateTime, 1000);
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="task.js"></script>
         <script src="dashboard.js"></script>
-    
+        <script>
+            loadStudents();
+            document.addEventListener('DOMContentLoaded', function() {
+                const editTaskModal = document.getElementById('editTaskModal');
+                if (editTaskModal) {
+                    editTaskModal.addEventListener('hidden.bs.modal', function() {
+                        // Remove lingering backdrop and modal-open class
+                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                        document.body.classList.remove('modal-open');
+                    });
+                }
+            });
+        </script>
+
+
 
 </body>
 
