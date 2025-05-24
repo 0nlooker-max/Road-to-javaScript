@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 14, 2025 at 09:48 PM
+-- Generation Time: May 24, 2025 at 08:52 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,6 +20,22 @@ SET time_zone = "+00:00";
 --
 -- Database: `javascript_try`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `audit_log`
+--
+
+CREATE TABLE `audit_log` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `details` text DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `timestamp` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -114,7 +130,11 @@ CREATE TABLE `tasks` (
 --
 
 INSERT INTO `tasks` (`task_id`, `task_title`, `discription`, `deadline`, `Date_created`) VALUES
-(1, 'sadfad', 'afasf', '2025-05-01 14:27:00', '2025-05-14 13:55:32');
+(7, 'putik', 'huhuhuhuh2', '2025-05-24 00:55:00', '2025-05-24 04:46:29'),
+(8, 'power', 'cant', '2025-05-23 16:55:00', '2025-05-23 23:44:45'),
+(9, 'hehey', 'waybouts', '2025-05-24 00:55:00', '2025-05-23 18:59:27'),
+(10, 'happy', 'cantttt', '2025-05-24 09:11:00', '2025-05-23 18:58:29'),
+(11, 'adohno', 'matulog sayu', '2025-05-25 04:41:00', '2025-05-24 06:42:03');
 
 -- --------------------------------------------------------
 
@@ -128,8 +148,27 @@ CREATE TABLE `task_assignment` (
   `student_id` int(11) NOT NULL,
   `status` varchar(45) NOT NULL,
   `attach_link` varchar(255) DEFAULT NULL,
-  `attach_file` varchar(255) DEFAULT NULL
+  `attach_file` varchar(255) DEFAULT NULL,
+  `date_submitted` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `task_assignment`
+--
+
+INSERT INTO `task_assignment` (`assignment_id`, `task_id`, `student_id`, `status`, `attach_link`, `attach_file`, `date_submitted`) VALUES
+(24, 10, 26, 'Pending', NULL, NULL, '2025-05-23 23:29:05'),
+(25, 10, 27, 'Submitted', 'http://localhost/phpmyadmin/index.php?route=/sql&pos=0&db=javascript_try&table=task_assignment', NULL, '2025-05-23 23:29:05'),
+(26, 9, 26, 'Pending', NULL, NULL, '2025-05-23 23:29:05'),
+(27, 9, 27, 'Pending', NULL, NULL, '2025-05-23 23:29:05'),
+(29, 8, 26, 'Pending', NULL, NULL, '2025-05-23 23:44:45'),
+(30, 8, 26, 'Pending', NULL, NULL, '2025-05-23 23:44:45'),
+(31, 8, 27, 'Pending', NULL, NULL, '2025-05-23 23:44:45'),
+(32, 8, 27, 'Pending', NULL, NULL, '2025-05-23 23:44:45'),
+(33, 7, 26, 'Pending', NULL, NULL, '2025-05-24 04:46:29'),
+(34, 7, 27, 'Pending', NULL, NULL, '2025-05-24 04:46:29'),
+(35, 11, 26, 'Pending', NULL, NULL, '2025-05-24 06:42:03'),
+(36, 11, 27, 'Pending', NULL, NULL, '2025-05-24 06:42:03');
 
 -- --------------------------------------------------------
 
@@ -160,14 +199,20 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`student_id`, `first_name`, `last_name`, `email`, `gender`, `phone_number`, `course`, `user_address`, `birthdate`, `profile_image`, `user_password`, `verification_code`, `is_verified`, `date_created`, `role`) VALUES
-(24, 'ricksel', 'pagatpat', 'rexpagatpat@gmail.com', 'Male', 8083082, 'BIST', 'caynag buyhaatsy', '2009-02-01', '../profiles/asta union.jpeg', '$2y$10$W8WVYXgu9EvseTsQxhuodO4lzGnT3VL5OYgfWcXWtfEjMEKIz0Ca2', '', 1, '2025-05-10 05:44:35', 'admin'),
-(25, 'Lynlyn', 'gfdggr', 'rex@gmial.com', 'Female', 324235, 'dgd', 'caynag buyhaatsy', '2004-02-20', NULL, '$2y$10$BzcQOndG0D1zN8bu05zHVeZbU3ALBRimP3sa4naPiQz8NLm5FH5Zy', '0e591a792c164d58afb527b841baff45', 0, '2025-04-22 05:53:43', '0'),
-(26, 'wdd', 'dssd', 'rexpagatpat@gmail.com', 'Male', 23123, 'BSIT', 'saadd', '2222-02-22', NULL, '$2y$10$p5.M7d1u3ghWeFnhMFjWPuZyDBXX8Nfm/U2GxuBxwSwexd/L1bHLO', '', 1, '2025-04-29 05:23:33', '0'),
-(27, 'rikki', 'pagatpat', 'prikkirose@gmail.com', 'Female', 35252353, 'bsat', '12dfgsdg', '2003-06-03', NULL, '$2y$10$8BtkzrseFzHke.FaY5S09uj7Tkb5AETqCRZjfovS96FNFjpXQ9lhG', '', 1, '2025-05-10 08:28:32', 'student');
+(24, 'ricksel', 'pagatpat', 'rexpagatpat@gmail.com', 'Male', 77777, 'BIST', 'caynag buyhaatsy', '2009-02-01', '../profiles/asta union.jpeg', '$2y$10$W8WVYXgu9EvseTsQxhuodO4lzGnT3VL5OYgfWcXWtfEjMEKIz0Ca2', '', 1, '2025-05-24 06:50:43', 'admin'),
+(25, 'Lynlyn', 'gfdggr', 'rex@gmial.com', 'Female', 324235, 'dgd', 'caynag buyhaatsy', '2004-02-20', NULL, '$2y$10$BzcQOndG0D1zN8bu05zHVeZbU3ALBRimP3sa4naPiQz8NLm5FH5Zy', '0e591a792c164d58afb527b841baff45', 0, '2025-05-14 20:02:31', 'student'),
+(26, 'wdd', 'dssd', 'rexpagatpat@gmail.com', 'Male', 23123, 'BSIT', 'saadd', '2222-02-22', NULL, '$2y$10$p5.M7d1u3ghWeFnhMFjWPuZyDBXX8Nfm/U2GxuBxwSwexd/L1bHLO', '', 1, '2025-05-14 20:02:22', 'student'),
+(27, 'rikki', 'pagatpat', 'prikkirose@gmail.com', 'Female', 35252353, 'bsat', '12dfgsdg', '2003-06-03', 'profiles/Natori.jpg', '$2y$10$8BtkzrseFzHke.FaY5S09uj7Tkb5AETqCRZjfovS96FNFjpXQ9lhG', '', 1, '2025-05-23 19:15:15', 'student');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `audit_log`
+--
+ALTER TABLE `audit_log`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `prilimtable`
@@ -212,6 +257,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `audit_log`
+--
+ALTER TABLE `audit_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
 -- AUTO_INCREMENT for table `prilimtable`
 --
 ALTER TABLE `prilimtable`
@@ -233,13 +284,13 @@ ALTER TABLE `tablescript`
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `task_assignment`
 --
 ALTER TABLE `task_assignment`
-  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `users`

@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Mark a submission as completed
-function markCompleted(submissionId) {
-    fetch(`mark_completed.php?submission_id=${submissionId}`, { method: 'POST' })
+function markCompleted(assignment_id) {
+    fetch(`mark_completed.php?assignment_id=${assignment_id}`, { method: 'POST' })
         .then(response => response.json())
         .then(data => {
             if (data.res === 'success') {
@@ -151,16 +151,35 @@ function fetchTaskDetails(taskId) {
                 pendingTable.appendChild(row);
             });
 
-            // Populate submitted assignments
+            // Populate submitted assignments with download + open links
             const submittedTable = document.getElementById('submittedAssignments');
             submittedTable.innerHTML = '';
             data.submitted.forEach(student => {
                 const row = document.createElement('tr');
+                // Normalize values
+                const file = student.attach_file && student.attach_file !== 'NULL' && student.attach_file !== '' ? student.attach_file : '';
+                const link = student.attach_link && student.attach_link !== 'NULL' && student.attach_link !== '' ? student.attach_link : '';
+
+                let fileCell = '';
+                if (file && !link) {
+                    fileCell = `<a href="${file.startsWith('/') ? file : '/' + file}" download>Download</a>`;
+                } else if (link && !file) {
+                    fileCell = `<a href="${link}" target="_blank" rel="noopener noreferrer">Open Link</a>`;
+                } else if (file && link) {
+                    fileCell = `<a href="${file.startsWith('/') ? file : '/' + file}" download>Download</a> | <a href="${link}" target="_blank" rel="noopener noreferrer">Open Link</a>`;
+                } else {
+                    fileCell = 'No File';
+                }
+
                 row.innerHTML = `
-                    <td>${student.name}</td>
-                    <td><a href="${student.file_link}" target="_blank">Download</a></td>
+                    <td>${student.name || student.student_name}</td>
+                    <td>${fileCell}</td>
                     <td>Submitted</td>
-                    <td><button class="btn btn-success" onclick="markCompleted(${student.submission_id})">Mark Completed</button></td>
+                    <td>
+                        <button class="btn btn-success" onclick="markCompleted(${student.assignment_id})">
+                            Mark Completed
+                        </button>
+                    </td>
                 `;
                 submittedTable.appendChild(row);
             });
@@ -171,6 +190,7 @@ function fetchTaskDetails(taskId) {
         })
         .catch(error => console.error('Error fetching task details:', error));
 }
+
 // Load students into the edit modal's select and pre-select assigned ones
 function populateEditAssignedStudents(allStudents, assignedStudents) {
     const select = document.getElementById('editAssignedStudents');
@@ -281,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Handle badge removal
-    document.getElementById('assignedStudentsList').onclick = function(event) {
+    document.getElementById('assignedStudentsList').onclick = function (event) {
         if (event.target.classList.contains('remove-student-btn')) {
             const studentId = event.target.getAttribute('data-student-id');
             // Remove from select
@@ -302,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Handle Save Changes (AJAX)
-   document.getElementById('saveTaskChanges').addEventListener('click', function () {
+    document.getElementById('saveTaskChanges').addEventListener('click', function () {
         const taskId = document.getElementById('editTaskId').value;
         const title = document.getElementById('editTaskTitle').value.trim();
         const description = document.getElementById('editTaskDescription').value.trim();
@@ -399,3 +419,5 @@ $(document).ready(function () {
         });
     });
 });
+
+

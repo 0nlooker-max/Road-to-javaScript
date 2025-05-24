@@ -1,6 +1,8 @@
 <?php
 // filepath: c:\xampp\htdocs\JavaScript\Road-to-javaScript\dashboard.php
-
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL);
 session_start(); // Start the session
 
 // Check if the user is logged in
@@ -131,9 +133,7 @@ try {
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
                             <th scope="col">Deadline</th>
-
                             <th scope="col">Action</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="tableBodytask">
@@ -145,6 +145,7 @@ try {
 
                                 <td><button type="button" class="btn btn-warning bi bi-eye me-2" id="view" data-task-id="1"></button>
                                     <button type="button" class="btn btn-primary bi bi-pencil-square me-2 edit-btn" data-bs-toggle="modal" data-bs-target="#editTaskModal" data-task-id="1"></button>
+                                    
                                 </td>
 
                             </tr>
@@ -291,6 +292,33 @@ try {
                 </div>
             </div>
         </div>
+        <!-- view completed student -->
+        <div class="modal fade" id="completedAssignmentsModal" tabindex="-1" aria-labelledby="completedAssignmentsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="completedAssignmentsModalLabel">Completed Assignments</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Date Submitted</th>
+                                    <th>Task Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="completedAssignmentsBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script>
             function updateDateTime() {
                 const now = new Date();
@@ -307,6 +335,7 @@ try {
         <script src="dashboard.js"></script>
         <script>
             loadStudents();
+
             document.addEventListener('DOMContentLoaded', function() {
                 const editTaskModal = document.getElementById('editTaskModal');
                 if (editTaskModal) {
@@ -317,6 +346,21 @@ try {
                     });
                 }
             });
+
+            function renderTaskRow(task) {
+                const template = document.getElementById('produtrowtemplatetask');
+                const clone = template.content.cloneNode(true);
+                clone.querySelector('.title').textContent = task.title;
+                clone.querySelector('.disc').textContent = task.description;
+                clone.querySelector('.deads').textContent = task.deadline;
+
+                // Set data-task-id for all relevant buttons
+                clone.querySelector('.view-btn').setAttribute('data-task-id', task.task_id);
+                clone.querySelector('.edit-btn').setAttribute('data-task-id', task.task_id);
+                clone.querySelector('.view-completed-btn').setAttribute('data-task-id', task.task_id);
+
+                document.getElementById('tableBodytask').appendChild(clone);
+            }
         </script>
 
 

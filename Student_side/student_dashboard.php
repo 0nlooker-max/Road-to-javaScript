@@ -1,23 +1,18 @@
 <?php
-// filepath: c:\xampp\htdocs\JavaScript\Road-to-javaScript\dashboard.php
 
-session_start(); // Start the session
-
+session_start();
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
-    // Redirect to login page if not logged in or not an admin
     header("Location: login.php?message=not_logged_in");
     exit();
 }
 
-// Get the user's email and ID from the session
 $user_id = $_SESSION['user_id'];
 $user_email = isset($_SESSION['email']) ? $_SESSION['email'] : "User";
 
-// Include database connection
 require 'connection.php';
 
-// Fetch user details from the database
+// Fetch user details
 try {
     $stmt = $connection->prepare("SELECT first_name, last_name, course, phone_number, user_address, profile_image FROM users WHERE student_id = :user_id");
     $stmt->bindParam(':user_id', $user_id);
@@ -30,14 +25,14 @@ try {
         $course = $user['course'];
         $phone_number = $user['phone_number'];
         $user_address = $user['user_address'];
-        $profile_image = $user['profile_image'] ? $user['profile_image'] : '\profiles\fighting meme.webp'; // Default image if none is set
+        $profile_image = $user['profile_image'] ? $user['profile_image'] : '\profiles\fighting meme.webp';
     } else {
         $first_name = "Unknown";
         $last_name = "User";
         $course = "";
         $phone_number = "";
         $user_address = "";
-        $profile_image = '\profiles\fighting meme.webp'; // Default image
+        $profile_image = '\profiles\fighting meme.webp';
     }
 } catch (Exception $e) {
     $first_name = "Error";
@@ -45,18 +40,30 @@ try {
     $course = "";
     $phone_number = "";
     $user_address = "";
-    $profile_image = '\profiles\fighting meme.webp'; // Default image
+    $profile_image = '\profiles\fighting meme.webp';
 }
 
-
-
+// Fetch task counts
 try {
-    $stmt = $connection->prepare("SELECT COUNT(*) AS total_verified_users FROM users WHERE is_verified = 1");
+    // Pending
+    $stmt = $connection->prepare("SELECT COUNT(*) FROM task_assignment WHERE student_id = :student_id AND status = 'Pending'");
+    $stmt->bindParam(':student_id', $user_id);
     $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $total_verified_users = $result['total_verified_users'];
+    $pending_tasks = $stmt->fetchColumn();
+
+    // Completed
+    $stmt = $connection->prepare("SELECT COUNT(*) FROM task_assignment WHERE student_id = :student_id AND status = 'Completed'");
+    $stmt->bindParam(':student_id', $user_id);
+    $stmt->execute();
+    $completed_tasks = $stmt->fetchColumn();
+
+    // Submitted
+    $stmt = $connection->prepare("SELECT COUNT(*) FROM task_assignment WHERE student_id = :student_id AND status = 'Submitted'");
+    $stmt->bindParam(':student_id', $user_id);
+    $stmt->execute();
+    $submitted_tasks = $stmt->fetchColumn();
 } catch (Exception $e) {
-    $total_verified_users = "Error"; // Handle errors gracefully
+    $pending_tasks = $completed_tasks = $submitted_tasks = 0;
 }
 ?>
 
@@ -66,7 +73,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Student Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="dash.css">
@@ -76,7 +83,7 @@ try {
     <div class="sidebar">
         <div>
             <h4>Dashboard Menu</h4>
-            <a href="dashboard.php" class="bi bi-house"> Home</a>
+            <a href="student_dashboard.php" class="bi bi-house"> Home</a>
             <a href="#" class="bi bi-people"> Users</a>
             <a href="Task.php" class="bi bi-people"> Task</a>
             <a href="#" class="bi bi-gear"> Settings</a>
@@ -98,53 +105,26 @@ try {
             <div class="col-md-4 equal-height">
                 <div class="card w-100">
                     <div class="card-body">
-                        <h5 class="card-title "> Verified Users</h5>
-                        <p class="card-text bi-people"> <?php echo htmlspecialchars($total_verified_users); ?></p>
+                        <h5 class="card-title text-warning"><i class="bi bi-hourglass-split"></i> Pending Tasks</h5>
+                        <p class="card-text fs-2"><?php echo $pending_tasks; ?></p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 equal-height">
                 <div class="card w-100">
                     <div class="card-body">
-                        <h5 class="card-title">Active Session</h5>
-                        <p class="bi-cup-hot-fill"> 500</p>
+                        <h5 class="card-title text-info"><i class="bi bi-upload"></i> Submitted Tasks</h5>
+                        <p class="card-text fs-2"><?php echo $submitted_tasks; ?></p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 equal-height">
                 <div class="card w-100">
                     <div class="card-body">
-                        <h5 class="card-title"> Status</h5>
-                        <p class="bi-heart-pulse-fill"> !Good</p>
+                        <h5 class="card-title text-success"><i class="bi bi-check-circle"></i> Completed Tasks</h5>
+                        <p class="card-text fs-2"><?php echo $completed_tasks; ?></p>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="container mt-5 ">
-            <div class="row">
-                <table class="table table-light shadow p-3 mb-5 bg-white rounded">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">FirstName</th>
-                            <th scope="col">LastName</th>
-                            <th scope="col">Course</th>
-                            <th scope="col">Address</th>
-                            <th scope="col">Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <template id="produtrowtemplate">
-                            <tr>
-                                <td class="fname">Fname</td>
-                                <td class="lname">Lname</td>
-                                <td class="course">Course</td>
-                                <td class="address">Address</td>
-                                <td class="is_verified">Status</td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
             </div>
         </div>
 
@@ -206,11 +186,8 @@ try {
             setInterval(updateDateTime, 1000);
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="dashboard.js"></script>
         <script src="login.js"></script>
-
 </body>
-
 </html>

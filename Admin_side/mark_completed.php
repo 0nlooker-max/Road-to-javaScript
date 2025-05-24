@@ -1,11 +1,11 @@
 <?php
 require 'connection.php';
 
-if (isset($_GET['submission_id'])) {
-    $submission_id = $_GET['submission_id'];
-
+if (isset($_GET['assignment_id'])) {
+    $submission_id = $_GET['assignment_id'];
+    echo $submission_id;
     try {
-        $stmt = $connection->prepare("UPDATE task_assignment SET status = 'Completed' WHERE submission_id = ?");
+        $stmt = $connection->prepare("UPDATE task_assignment SET status = 'Completed' WHERE assignment_id = ?");
         $stmt->execute([$submission_id]);
 
         echo json_encode(['res' => 'success', 'msg' => 'Submission marked as completed']);

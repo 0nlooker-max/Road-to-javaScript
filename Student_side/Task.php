@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html?message=not_logged_in");
+    header("Location: ../login.html?message=not_logged_in");
     exit();
 }
 
@@ -42,13 +42,13 @@ try {
     $profile_image = '\profiles\fighting meme.webp';
 }
 
-// Fetch assigned (not completed) tasks
+// Fetch assigned (pending) tasks
 try {
     $stmt = $connection->prepare("
-        SELECT t.task_title, t.discription AS description, t.deadline, ta.status
+        SELECT t.task_id, t.task_title, t.discription AS description, t.deadline, ta.status
         FROM task_assignment ta
         JOIN tasks t ON ta.task_id = t.task_id
-        WHERE ta.student_id = :student_id AND ta.status != 'Completed'
+        WHERE ta.student_id = :student_id AND ta.status = 'Pending'
         ORDER BY t.deadline ASC
     ");
     $stmt->bindParam(':student_id', $user_id);
@@ -61,10 +61,16 @@ try {
 // Fetch completed tasks
 try {
     $stmt = $connection->prepare("
-        SELECT t.task_title, t.discription AS description, t.deadline, ta.status
+        SELECT t.task_title, t.discription AS description, t.deadline, ta.status, ta.attach_file, ta.attach_link
         FROM task_assignment ta
         JOIN tasks t ON ta.task_id = t.task_id
-        WHERE ta.student_id = :student_id AND ta.status = 'Completed'
+        WHERE ta.student_id = :student_id
+          AND (ta.status = 'Completed' OR ta.status = 'Submitted')
+          AND (
+                (ta.attach_file IS NOT NULL AND ta.attach_file != '')
+                OR
+                (ta.attach_link IS NOT NULL AND ta.attach_link != '')
+              )
         ORDER BY t.deadline DESC
     ");
     $stmt->bindParam(':student_id', $user_id);
@@ -199,102 +205,130 @@ try {
                             <td><?= htmlspecialchars($task['description']) ?></td>
                             <td><?= htmlspecialchars($task['deadline']) ?></td>
                             <td><b><?= htmlspecialchars($task['status']) ?></b></td>
-                            <td>Actions</td>
+                            <td>
+                                <?php if (!empty($task['attach_file']) || !empty($task['attach_link'])): ?>
+                                    <button
+                                        class="btn btn-primary btn-sm view-submission-btn"
+                                        data-title="<?= htmlspecialchars($task['task_title']) ?>"
+                                        data-description="<?= htmlspecialchars($task['description']) ?>"
+                                        data-deadline="<?= htmlspecialchars($task['deadline']) ?>"
+                                        data-status="<?= htmlspecialchars($task['status']) ?>"
+                                        data-file="<?= htmlspecialchars($task['attach_file']) ?>"
+                                        data-link="<?= htmlspecialchars($task['attach_link']) ?>"
+                                        data-type="<?= !empty($task['attach_file']) ? 'file' : 'link' ?>"
+                                        data-submitted="<?= htmlspecialchars($task['submitted_at'] ?? '') ?>">View</button>
+                                <?php else: ?>
+                                    <span class="text-muted">N/A</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </tbody>
         </table>
-    </div>
 
-    <!-- Submit Task Modal -->
-    <div class="modal fade" id="submitTaskModal" tabindex="-1" aria-labelledby="submitTaskModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content" style="background:#28263a;color:#fff;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="submitTaskModalLabel" style="color:#19e6ff;">Submit Task</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="submitTaskForm" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <input type="hidden" id="modalTaskId" name="task_id">
-                        <div class="mb-3">
-                            <label class="form-label" style="color:#19e6ff;">Upload your file (PDF or Word)</label>
-                            <input type="file" class="form-control" name="attach_file" accept=".pdf,.doc,.docx">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" style="color:#19e6ff;">Or paste a link</label>
-                            <input type="url" class="form-control" name="attach_link" placeholder="https://example.com">
-                        </div>
+        <!-- Submit Task Modal -->
+        <div class="modal fade" id="submitTaskModal" tabindex="-1" aria-labelledby="submitTaskModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background:#28263a;color:#fff;">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title" id="submitTaskModalLabel" style="color:#19e6ff;">Submit Task</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-footer border-0">
-                        <button type="submit" class="btn w-100" style="background:#19e6ff;color:#222;">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- Profile Edit Modal -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editProfileForm">
-                        <div class="row">
-                            <div class="mb-3 col">
-                                <label for="editFirstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="editFirstName" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" readonly required>
+                    <form id="submitTaskForm" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <input type="hidden" id="modalTaskId" name="task_id">
+                            <div class="mb-3">
+                                <label class="form-label" style="color:#19e6ff;">Upload your file (PDF or Word)</label>
+                                <input type="file" class="form-control" name="attach_file" accept=".pdf,.doc,.docx">
                             </div>
-                            <div class="mb-3 col">
-                                <label for="editLastName" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="editLastName" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" readonly required>
+                            <div class="mb-3">
+                                <label class="form-label" style="color:#19e6ff;">Or paste a link</label>
+                                <input type="url" class="form-control" name="attach_link" placeholder="https://example.com">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="mb-3 col">
-                                <label for="editCourse" class="form-label">Course</label>
-                                <input type="text" class="form-control" id="editCourse" name="course" value="<?php echo htmlspecialchars($course); ?>" readonly required>
-                            </div>
-                            <div class="mb-3 col">
-                                <label for="editPnum" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" id="editPnum" name="phone_number" value="<?php echo htmlspecialchars($phone_number); ?>" readonly required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="mb-3 col">
-                                <label for="editAddress" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="editAddress" name="user_address" value="<?php echo htmlspecialchars($user_address); ?>" readonly required>
-                            </div>
-                            <div class="mb-3 col">
-                                <label for="editProfileImage" class="form-label">Profile Image</label>
-                                <input type="file" class="form-control" id="editProfileImage" name="profile_image" disabled>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="editToggleBtn">Edit</button>
+                        <div class="modal-footer border-0">
+                            <button type="submit" class="btn w-100" style="background:#19e6ff;color:#222;">Submit</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
-    <script>
-        function updateDateTime() {
-            const now = new Date();
-            document.getElementById("dateTime").innerText = now.toLocaleString();
-        }
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="login.js"></script>
-    <script src="student_task.js"></script>
+        <!-- Profile Edit Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editProfileForm">
+                            <div class="row">
+                                <div class="mb-3 col">
+                                    <label for="editFirstName" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="editFirstName" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" readonly required>
+                                </div>
+                                <div class="mb-3 col">
+                                    <label for="editLastName" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="editLastName" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" readonly required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3 col">
+                                    <label for="editCourse" class="form-label">Course</label>
+                                    <input type="text" class="form-control" id="editCourse" name="course" value="<?php echo htmlspecialchars($course); ?>" readonly required>
+                                </div>
+                                <div class="mb-3 col">
+                                    <label for="editPnum" class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" id="editPnum" name="phone_number" value="<?php echo htmlspecialchars($phone_number); ?>" readonly required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3 col">
+                                    <label for="editAddress" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="editAddress" name="user_address" value="<?php echo htmlspecialchars($user_address); ?>" readonly required>
+                                </div>
+                                <div class="mb-3 col">
+                                    <label for="editProfileImage" class="form-label">Profile Image</label>
+                                    <input type="file" class="form-control" id="editProfileImage" name="profile_image" disabled>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="editToggleBtn">Edit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- View Submission Modal -->
+        <div class="modal fade" id="submissionDetailsModal" tabindex="-1" aria-labelledby="submissionDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background:#f8f9fa;color:#222;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="submissionDetailsModalLabel">Submission Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="submissionDetailsBody">
+                        <!-- Details will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                document.getElementById("dateTime").innerText = now.toLocaleString();
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="login.js"></script>
+        <script src="student_task.js"></script>
 </body>
 
 </html>

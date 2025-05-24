@@ -1,5 +1,8 @@
 <?php
 require 'connection.php';
+require '../audit_log.php';
+
+session_start(); // Needed to get the user ID
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -19,8 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$taskId, $studentId]);
         }
 
+        // Audit log: task creation
+        $userId = $_SESSION['user_id'] ?? null;
+        $details = "Created task: $taskTitle (ID: $taskId), assigned to students: " . implode(',', $assignedStudents);
+        log_audit($connection, $userId, 'create_task', $details);
+
         echo json_encode(['res' => 'success', 'msg' => 'Task added successfully']);
     } catch (Exception $e) {
+        // Audit log: error
+        $userId = $_SESSION['user_id'] ?? null;
+        log_audit($connection, $userId, 'create_task_failed', 'Error: ' . $e->getMessage());
         echo json_encode(['res' => 'error', 'msg' => 'Failed to add task: ' . $e->getMessage()]);
     }
 }

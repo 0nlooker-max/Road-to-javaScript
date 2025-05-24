@@ -5,6 +5,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require 'connection.php';
+require_once '../audit_log.php';
 
 session_start();
 
@@ -24,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         $existingProfile = $stmt->fetchColumn();
     } catch (Exception $e) {
         error_log("Error fetching existing profile image: " . $e->getMessage());
+        log_audit($connection, $user_id, 'update_profile_failed', 'Failed to fetch existing profile image: ' . $e->getMessage());
         echo json_encode(['res' => 'error', 'msg' => 'Failed to fetch existing profile image.']);
         exit();
     }
@@ -51,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 }
             } else {
                 error_log("Error uploading profile image.");
+                log_audit($connection, $user_id, 'update_profile_failed', 'Failed to upload profile image');
                 echo json_encode(['res' => 'error', 'msg' => 'Failed to upload profile image.']);
                 exit();
             }
@@ -67,15 +70,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         $stmt->execute([$first_name, $last_name, $course, $phone_number, $user_address, $profile_image, $user_id]);
 
         if ($stmt->rowCount() > 0) {
+            log_audit($connection, $user_id, 'update_profile', 'Profile updated');
             echo json_encode(['res' => 'success', 'msg' => 'Profile updated successfully.']);
         } else {
+            log_audit($connection, $user_id, 'update_profile', 'No changes made to profile');
             echo json_encode(['res' => 'error', 'msg' => 'No changes were made to the profile.']);
         }
     } catch (Exception $e) {
         error_log("Error updating profile: " . $e->getMessage());
+        log_audit($connection, $user_id, 'update_profile_failed', 'Error updating profile: ' . $e->getMessage());
         echo json_encode(['res' => 'error', 'msg' => $e->getMessage()]);
     }
 } else {
+    log_audit($connection, null, 'update_profile_failed', 'Invalid request method');
     echo json_encode(['res' => 'error', 'msg' => 'Invalid request method.']);
 }
 ?>
