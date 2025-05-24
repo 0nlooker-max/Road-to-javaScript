@@ -98,7 +98,7 @@ $(".logoutBtn").on("click", function (event) {
 
                 if (response.res === "success") {
                     alert(response.msg); // Show success message
-                    window.location.href = "../login.html"; // Redirect to the login page
+                    window.location.href = "../index.html"; // Redirect to the login page
                 } else {
                     alert("Error: " + response.msg); // Show error message
                 }

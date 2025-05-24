@@ -72,7 +72,7 @@ $(document).ready(function () {
 
                 if (response.res === "success") {
                     alert("Logout successful!");
-                    window.location.href = "login.html"; // Redirect to the login page
+                    window.location.href = "index.html"; // Redirect to the login page
                 } else {
                     alert("Error: " + response.msg); // Show error message
                 }

@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login.html?message=not_logged_in");
+    header("Location: ../index.html?message=not_logged_in");
     exit();
 }
 
